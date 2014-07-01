@@ -1,0 +1,67 @@
+$ ./sarview.py /var/log/sa/sa21
+Error while parsing sar -n IP
+Error while parsing sar -n EIP
+Error while parsing sar -n ICMP
+Error while parsing sar -n EICMP
+Error while parsing sar -n TCP
+Error while parsing sar -n ETCP
+Error while parsing sar -n UDP
+
+==============================================================================
+- IDENTITY
+  - HOSTNAME: XXXXXXX.ne.jp
+  - DATETIME: 2014-06-21 00:01:01 - 2014-06-21 23:59:01
+- H/W
+  - CPU: 2
+  - RAM: 0.97 GB
+  - SWAP: 2.00 GB
+  - DISC: dev253_0, dev252_0
+  - NETWORK: lo, docker0, eth0
+
+- METRICS SUMMARY:
+ cpu.0.idle(98.60) cpu.0.iowait(0.63) cpu.0.nice(0.04) cpu.0.steal(0.00)
+ cpu.0.system(0.31) cpu.0.user(0.42) cpu.1.idle(99.12) cpu.1.iowait(0.09)
+ cpu.1.nice(0.03) cpu.1.steal(0.00) cpu.1.system(0.33) cpu.1.user(0.43)
+ cpu.all.idle(98.86) cpu.all.iowait(0.36) cpu.all.nice(0.03)
+ cpu.all.steal(0.00) cpu.all.system(0.32) cpu.all.user(0.43)
+ devio.dev252_0.avgqu_sz(0.22) devio.dev252_0.avgrq_sz(24.30)
+ devio.dev252_0.await(22.85) devio.dev252_0.rd_secPs(42.16)
+ devio.dev252_0.svctm(1.10) devio.dev252_0.tps(9.47) devio.dev252_0.util(1.04)
+ devio.dev252_0.wr_secPs(187.95) devio.dev253_0.avgqu_sz(0.00)
+ devio.dev253_0.avgrq_sz(0.00) devio.dev253_0.await(0.00)
+ devio.dev253_0.rd_secPs(0.00) devio.dev253_0.svctm(0.00)
+ devio.dev253_0.tps(0.00) devio.dev253_0.util(0.00)
+ devio.dev253_0.wr_secPs(0.00) inode.dentunusd(8636.00) inode.file_nr(1931.00)
+ inode.inode_nr(11578.00) inode.pty_nr(7.00) io.breadPs(42.16)
+ io.bwrtnPs(187.95) io.faultPs(152.69) io.majfltPs(0.19) io.pgfreePs(86.87)
+ io.pgpginPs(21.08) io.pgpgoutPs(93.97) io.pgscandPs(51.62) io.pgscankPs(20.27)
+ io.pgstealPs(15.60) io.rtps(1.04) io.tps(9.47) io.vmeff(21.70) io.wtps(8.43)
+ load.ldavg_1(0.02) load.ldavg_15(0.00) load.ldavg_5(0.01)
+ load.plist_sz(268.00) load.runq_sz(0.00) mem.bufpgPs(0.26) mem.campgPs(0.24)
+ mem.commit(60.95) mem.frmpgPs(0.04) mem.kbbuffers(84668.00)
+ mem.kbcached(138901.00) mem.kbcommit(1899509.00) mem.kbmemfree(90396.00)
+ mem.kbmemused(929828.00) mem.memused(91.14) net.docker0.rxcmpPs(0.00)
+ net.docker0.rxkBPs(0.00) net.docker0.rxmcstPs(0.00) net.docker0.rxpckPs(0.00)
+ net.docker0.txcmpPs(0.00) net.docker0.txkBPs(0.00) net.docker0.txpckPs(0.00)
+ net.eth0.rxcmpPs(0.00) net.eth0.rxkBPs(2.64) net.eth0.rxmcstPs(0.00)
+ net.eth0.rxpckPs(18.95) net.eth0.txcmpPs(0.00) net.eth0.txkBPs(0.44)
+ net.eth0.txpckPs(3.74) net.lo.rxcmpPs(0.00) net.lo.rxkBPs(1.91)
+ net.lo.rxmcstPs(0.00) net.lo.rxpckPs(16.90) net.lo.txcmpPs(0.00)
+ net.lo.txkBPs(1.91) net.lo.txpckPs(16.90) neterr.docker0.collPs(0.00)
+ neterr.docker0.rxdropPs(0.00) neterr.docker0.rxerrPs(0.00)
+ neterr.docker0.rxfifoPs(0.00) neterr.docker0.rxframPs(0.00)
+ neterr.docker0.txcarrPs(0.00) neterr.docker0.txdropPs(0.00)
+ neterr.docker0.txerrPs(0.00) neterr.docker0.txfifoPs(0.00)
+ neterr.eth0.collPs(0.00) neterr.eth0.rxdropPs(0.00) neterr.eth0.rxerrPs(0.00)
+ neterr.eth0.rxfifoPs(0.00) neterr.eth0.rxframPs(0.00)
+ neterr.eth0.txcarrPs(0.00) neterr.eth0.txdropPs(0.00)
+ neterr.eth0.txerrPs(0.00) neterr.eth0.txfifoPs(0.00) neterr.lo.collPs(0.00)
+ neterr.lo.rxdropPs(0.00) neterr.lo.rxerrPs(0.00) neterr.lo.rxfifoPs(0.00)
+ neterr.lo.rxframPs(0.00) neterr.lo.txcarrPs(0.00) neterr.lo.txdropPs(0.00)
+ neterr.lo.txerrPs(0.00) neterr.lo.txfifoPs(0.00) sock.ip_frag(0.00)
+ sock.rawsck(0.00) sock.tcp_tw(115.00) sock.tcpsck(77.00) sock.totsck(226.00)
+ sock.udpsck(9.00) swap.kbswpcad(63688.00) swap.kbswpfree(1664209.00)
+ swap.kbswpused(432263.00) swap.pswpinPs(0.90) swap.pswpoutPs(1.52)
+ swap.swpcad(14.73) swap.swpused(20.62) task.cswchPs(558.54) task.procPs(0.15)
+==============================================================================
+
