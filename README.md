@@ -15,9 +15,9 @@ Concept
 Components
 -------------
 * Sar tools and library
-    * tsutil.Sar(python module): parser for sar binary
+    * __tsutil.Sar__ (python module): parses sar binary output.
+    * sarview.py: summarizes sar.out to console.
     * sar2influx.py: connector for sar.out -> influxdb tools
-    * sarview.py: summarize sar.out
     * graph.py:  visualize sar.out
 
 TODO
