@@ -3,22 +3,27 @@ tsutil
 
 About
 -----------
-"tsutil" is a collection of small python library and scripts for troubleshooting.
+"tsutil" is a collection of small python libraries and scripts for troubleshooting.
 
 Concept
 ----------
 
 * Small and handy
-    * self-consistent libraries
+    * no other dependencies except python
+    * self-contained
     * pure python module
 
 Components
 -------------
 * Sar tools and library
     * __tsutil.Sar__ (python module): parses sar binary output.
-    * sarview.py: summarizes sar.out to console.
-    * sar2influx.py: connector for sar.out -> influxdb tools
-    * graph.py:  visualize sar.out
+    * __sarview.py__ : summarizes sar.out to console.
+    * __sargraph.py__:  visualize sar.out
+    * __sar2influx.py__ : connector for sar.out -> influxdb tools
+
+* Log analyze tools and library
+    * log2influx.py
+    * logsummary.py
 
 TODO
 -------------
@@ -26,4 +31,3 @@ TODO
 LISENCE
 ------------
 BSD
-
