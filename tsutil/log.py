@@ -62,6 +62,8 @@ class Log(object):
         else:
             self._do_callback = self._do_emit_stderr
 
+        self._parse()
+
     def __str__(self):
         ret = "<Parser: "
         ret += "lines:%d "% self.totallines
@@ -70,7 +72,7 @@ class Log(object):
         ret +=">"
         return ret
 
-    def parse(self):
+    def _parse(self):
         with open(self.fname) as fh:
             lines = 0
             for i, line in enumerate(fh):
