@@ -28,24 +28,39 @@ import os
 import re
 import datetime
 
-class Reader(object):
-    rule = {
-        "time_exp": [ r"(\w+\s\d\d\s\d\d:\d\d:\d\d)", r"%b %d %H:%M:%S" ],
-        "category": {
-            "error":r"\[ERROR\]",
-            "warn": r"\[WARN\]",
-            "info": r"\[INFO\]",
-            "log":  r"\[LOG\]"
-        }
+rule_default = {
+    "time_exp": [ r"(\w+\s\d\d\s\d\d:\d\d:\d\d)", r"%b %d %H:%M:%S" ],
+    "category": {
+        "error":r"\[ERROR\]",
+        "warn": r"\[WARN\]",
+        "info": r"\[INFO\]",
+        "log":  r"\[LOG\]"
     }
+}
 
-    def __init__(self, fh, rule=None):
-        self.fh = fh
+class Log(object):
+    def __init__(self, fname, parser=None, callback=None, rule=None):
+        self.fname = fname
+        assert os.path.exists(fname)
         self.counter = {}
-        #setting
-        self._do_parse = self._do_parse_syslog
-        self._do_emit = self._do_emit_stderr
-        self.rule = self.__class__.rule
+
+        #rule
+        if rule:
+            self._rule = rule
+        else:
+            self._rule = rule_default
+
+        #parser
+        if parser:
+            self._do_parse = parser
+        else:
+            self._do_parse = self._do_parse_syslog
+
+        #callback
+        if callback:
+            self._do_callback = callback
+        else:
+            self._do_callback = self._do_emit_stderr
 
     def __str__(self):
         ret = "<Parser: "
@@ -56,41 +71,46 @@ class Reader(object):
         return ret
 
     def parse(self):
-        lines = 0
-        for i, line in enumerate(self.fh):
-            lines += 1 
-            ret = self._do_parse(line)
-            if ret is None:
-                self._emit(0,"unparsable")
-            else:
-                self._emit(*ret)
-        self.totallines = lines
-
-    def _emit(self,t,v):
-        self.counter[v] = self.counter.get(v,0) + 1 
-        self._do_emit(t,v)
-
-    def _do_emit_stderr(self,t,v):
-        print t, v
+        with open(self.fname) as fh:
+            lines = 0
+            for i, line in enumerate(fh):
+                lines += 1 
+                ret = self._do_parse(line)
+                if ret is None:
+                    self._callback(0,"unparsable")
+                else:
+                    self._callback(*ret)
+            self.totallines = lines
 
     def _do_parse_syslog(self,line):
-        mo = re.search(self.rule["time_exp"][0],line)
+        """syslog does not contain year information, and datetime.datetime.strptime
+        regards year as 1900 if year is not specified. So We need to handle it as  
+        logs are generated this year.
+        """
+        mo = re.search(self._rule["time_exp"][0],line)
         if mo is None:
             return None
-        offset = datetime.datetime.strptime(mo.group(1), self.rule["time_exp"][1]) - datetime.datetime(1900,1,1)
+        offset = datetime.datetime.strptime(mo.group(1), self._rule["time_exp"][1]) - datetime.datetime(1900,1,1)
         t = datetime.datetime(datetime.date.today().year,1,1) + datetime.timedelta(days=offset.days, seconds=offset.seconds)
         kind = "other"
-        for k in self.rule["category"].keys():
-            mo2 = re.search(self.rule["category"][k],line)
+        for k in self._rule["category"].keys():
+            mo2 = re.search(self._rule["category"][k],line)
             if mo2:
                 kind = k
                 break
         return (t,kind)
 
+    def _callback(self,t,v):
+        self.counter[v] = self.counter.get(v,0) + 1 
+        return self._do_callback(t,v)
+
+    def _do_emit_stderr(self,t,v):
+        print t, v
+
 def main(logname):
     assert os.path.exists(logname)
     with open(logname) as f:
-        reader = Reader(f)
+        reader = Log(f)
         reader.parse()
         print reader
 
