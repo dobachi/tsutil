@@ -22,8 +22,8 @@ Components
     * __sar2influx.py__ : connector for sar.out -> influxdb tools
 
 * Log analyze tools and library
-    * log2influx.py
-    * logsummary.py
+    * __tsutil.Log__ (python module): parses log.
+    * __loggraph.py__: visualizes log levels and lines  with time.
 
 TODO
 -------------
