@@ -154,9 +154,10 @@ class SarGraph(object):
         x1, y1 = s.get_metric2("task.procPs")
         x2, y2 = s.get_metric2("task.cswchPs")
         ax, ax2 = self.__draw_tmpl(ax, ["proc","cs"])
-        ax.plot(x1, y1,color="orange")
-        ax2.plot(x2, y2, color="0.75")
-        #label
+        ax.plot(x1, y1,color="black")
+        ax2.plot(x2, y2, color="orange", alpha=0.8)
+        ax2.yaxis.label.set_color("orange")
+        ax2.tick_params(axis='y', colors="orange")
         label_text = "LOAD"
         label_ypos = ax.get_position().y1
         fig.text(0.03, label_ypos, label_text, fontsize=10, horizontalalignment='left', verticalalignment='top')
@@ -167,7 +168,7 @@ class SarGraph(object):
         x3, y3 = s.get_metric2("cpu.all.iowait")
         x4, y4 = s.get_metric2("cpu.all.idle")
         assert len(x1) == len (x2) and len(x1) == len (x3) and len(x1) == len(x4)
-        ax, _ = self.__draw_tmpl(ax,["Use[%%]",""],[(0,100),(None,None)])
+        ax, _ = self.__draw_tmpl(ax,["Use[%]",""],[(0,100),(None,None)])
         ax.stackplot(x1, y1, y2, y3, y4, colors=["orange","blue","purple","0.75"],linewidth=0)
         label_text = "CPU(ALL)"
         label_ypos = ax.get_position().y1
@@ -202,10 +203,13 @@ class SarGraph(object):
         assert len(x1) == len (x2) and len(x1) == len (x3)
         ax, ax2 = self.__draw_tmpl(ax,["Use[MB]","swapcount"])
         ax.stackplot(x1, y1, y2, y3, colors=["orange","0.50","0.75"],linewidth=0)
+        ax.set_ylim(0,None)
         ax2.vlines(x4, [0], y4, colors=["red"])
         ax2.vlines(x5, [0], [-y for y in y5] , colors=["blue"])
         _ = 1.1 * max([max(y4),max(y5)])
         ax2.set_ylim(-_,_)
+        ax2.yaxis.label.set_color("red")
+        ax2.tick_params(axis='y', colors="red")
 
         label_text = "RAM"
         label_ypos = ax.get_position().y1
@@ -259,8 +263,10 @@ class SarGraph(object):
         x1, y1 = s.get_metric2("devio.%s.util" % (devname,) )
         x2, y2 = s.get_metric2("devio.%s.await" % (devname,) )
         ax,ax2  = self.__draw_tmpl(ax,["util","await"],[[0,100],[0,max(y2)*1.1]])
-        ax.plot(x1,y1, color="orange")
-        ax2.plot(x2,y2, color="0.75")
+        ax.plot(x1,y1, color="black")
+        ax2.plot(x2,y2, color="orange", alpha=0.75)
+        ax2.yaxis.label.set_color("orange")
+        ax2.tick_params(axis='y', colors="orange")
 
     def _do_make_graph_network1(self,s,ax,fig):
         x1, y1 = s.get_metric2("sock.tcpsck")
@@ -270,6 +276,8 @@ class SarGraph(object):
         ax, ax2 = self.__draw_tmpl(ax,["tcpsock","total"])
         ax.stackplot(x1,y2,y1, colors=["orange","0.75"], linewidth=0)
         ax2.plot(x3,y3, color="purple")
+        ax2.yaxis.label.set_color("purple")
+        ax2.tick_params(axis='y', colors="purple")
 
         label_text = """Network(SOCK)""" % locals()
         label_ypos = ax.get_position().y1
