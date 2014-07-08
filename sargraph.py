@@ -150,6 +150,10 @@ class SarGraph(object):
                 ax2.set_ylim(*ylims[1])
         return ax,ax2
 
+    def __put_text(self,fig,ax,content):
+        label_ypos = ax.get_position().y1
+        fig.text(0.03, label_ypos, content, fontsize=10, horizontalalignment='left', verticalalignment='top')
+
     def _do_make_graph_load(self,s,ax,fig):
         x1, y1 = s.get_metric2("task.procPs")
         x2, y2 = s.get_metric2("task.cswchPs")
@@ -158,9 +162,7 @@ class SarGraph(object):
         ax2.plot(x2, y2, color="orange", alpha=0.8)
         ax2.yaxis.label.set_color("orange")
         ax2.tick_params(axis='y', colors="orange")
-        label_text = "LOAD"
-        label_ypos = ax.get_position().y1
-        fig.text(0.03, label_ypos, label_text, fontsize=10, horizontalalignment='left', verticalalignment='top')
+        self.__put_text(fig,ax,"LOAD")
 
     def _do_make_graph_cpu(self,s,ax,fig):
         x1, y1 = s.get_metric2("cpu.all.user")
@@ -170,9 +172,7 @@ class SarGraph(object):
         assert len(x1) == len (x2) and len(x1) == len (x3) and len(x1) == len(x4)
         ax, _ = self.__draw_tmpl(ax,["Use[%]",""],[(0,100),(None,None)])
         ax.stackplot(x1, y1, y2, y3, y4, colors=["orange","blue","purple","0.75"],linewidth=0)
-        label_text = "CPU(ALL)"
-        label_ypos = ax.get_position().y1
-        fig.text(0.03, label_ypos, label_text, fontsize=10, horizontalalignment='left', verticalalignment='top')
+        self.__put_text(fig,ax,"CPU")
 
     def _do_make_graph_cpu_detail(self,s,ax,fig,i):
         x1, y1 = s.get_metric2("cpu.%d.user" %(cpuid,))
@@ -210,10 +210,7 @@ class SarGraph(object):
         ax2.set_ylim(-_,_)
         ax2.yaxis.label.set_color("red")
         ax2.tick_params(axis='y', colors="red")
-
-        label_text = "RAM"
-        label_ypos = ax.get_position().y1
-        fig.text(0.03, label_ypos, label_text, fontsize=10, horizontalalignment='left', verticalalignment='top')
+        self.__put_text(fig,ax,"RAM")
 
     def _do_make_graph_mem2(self,s,ax,fig):
         x1, y1_ = s.get_metric2("swap.kbswpused")
@@ -223,9 +220,7 @@ class SarGraph(object):
         assert len(x1) == len (x2)
         ax, _ = self.__draw_tmpl(ax,["Use[MB]",""])
         ax.stackplot(x1, y2, y1, colors=["0.75","orange"], linewidth=0)
-        label_text = "SWAP"
-        label_ypos = ax.get_position().y1
-        fig.text(0.03, label_ypos, label_text, fontsize=10, horizontalalignment='left', verticalalignment='top')
+        self.__put_text(fig,ax,"swap")
 
     def _do_make_graph_disk1(self,s,ax,fig):
         x1, y1_ = s.get_metric2("io.breadPs") 
@@ -238,9 +233,7 @@ class SarGraph(object):
         ax.fill_between(x,y1,color="orange",edgecolor="orange")
         ax.fill_between(x,[-y for y in y2],color="purple",edgecolor="purple")
         ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda x,pos: abs(x)))
-        label_text = """Disk""" % locals()
-        label_ypos = ax.get_position().y1
-        fig.text(0.03, label_ypos, label_text, fontsize=10, horizontalalignment='left', verticalalignment='top')
+        self.__put_text(fig,ax,"Disk")
 
     def _do_make_graph_disk_detail(self,s,ax,fig,devname):
         x1, y1_ = s.get_metric2("devio.%s.rd_secPs" % (devname,) ) 
@@ -249,15 +242,11 @@ class SarGraph(object):
         y2 = [ y * 512 /1024. /1024. for y in y2_] 
         assert len(x1) == len(x2)
         x = x1
-
         ax, _  = self.__draw_tmpl(ax,["R/W[MB]",None])
         ax.fill_between(x,y1,color="orange",edgecolor="orange")
         ax.fill_between(x,[-y for y in y2],color="purple",edgecolor="purple")
         ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda x,pos: abs(x)))
-
-        label_text = """Disk[%(devname)s]""" % locals()
-        label_ypos = ax.get_position().y1
-        fig.text(0.03, label_ypos, label_text, fontsize=10, horizontalalignment='left', verticalalignment='top')
+        self.__put_text(fig,ax,"Disk[%(devname)s]" % locals())
 
     def _do_make_graph_disk_detail2(self,s,ax,fig,devname):
         x1, y1 = s.get_metric2("devio.%s.util" % (devname,) )
@@ -272,20 +261,12 @@ class SarGraph(object):
         x1, y1 = s.get_metric2("sock.tcpsck")
         x2, y2 = s.get_metric2("sock.tcp_tw")
         x3, y3 = s.get_metric2("sock.totsck")
-
         ax, ax2 = self.__draw_tmpl(ax,["tcpsock","total"])
         ax.stackplot(x1,y2,y1, colors=["orange","0.75"], linewidth=0)
         ax2.plot(x3,y3, color="purple")
         ax2.yaxis.label.set_color("purple")
         ax2.tick_params(axis='y', colors="purple")
-
-        label_text = """Network(SOCK)""" % locals()
-        label_ypos = ax.get_position().y1
-        fig.text(0.03, label_ypos, label_text, fontsize=10, horizontalalignment='left', verticalalignment='top')
-
-        for xtick in ax.xaxis.get_major_ticks():
-            xtick.label.set_fontsize(10)
-            xtick.label.set_rotation('vertical')
+        self.__put_text(fig,ax,"Network(SOCK)")
 
     def _do_make_graph_network_iface(self,s,ax,fig,iface):
         x1, y1 = s.get_metric2("net.%s.rxkBPs" % (iface,) )
@@ -296,9 +277,7 @@ class SarGraph(object):
         ax.fill_between(x,y1,color="orange",edgecolor="orange")
         ax.fill_between(x,[-y for y in y2],color="purple",edgecolor="purple")
         ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda x,pos: abs(x)))
-        label_text = """Network[%(iface)s]""" % locals()
-        label_ypos = ax.get_position().y1
-        fig.text(0.03, label_ypos, label_text, fontsize=10, horizontalalignment='left', verticalalignment='top')
+        self.__put_text(fig,ax,"Network[%(iface)s]" % locals())
 
 if __name__ == '__main__':
     s = Sar("tests/sar.out")
