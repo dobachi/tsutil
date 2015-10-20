@@ -124,7 +124,10 @@ class Sar(object):
         self.start = datetime.datetime.fromtimestamp(self.get_metric(self.get_metric_names()[0])[0][0])
         self.stop  = datetime.datetime.fromtimestamp(self.get_metric(self.get_metric_names()[0])[-1][0])
         self.ramsize_gb = self.get_metric("mem.kbmemused")[0][1] / 1024. / 1024. / self.get_metric("mem.memused")[0][1] * 100.
-        self.swapsize_gb= self.get_metric("swap.kbswpused")[0][1] / 1024. / 1024. / self.get_metric("swap.swpused")[0][1] * 100.
+        if self.get_metric("swap.swpused")[0][1] != 0:
+            self.swapsize_gb = self.get_metric("swap.kbswpused")[0][1] / 1024. / 1024. / self.get_metric("swap.swpused")[0][1] * 100.
+        else:
+            self.swapsize_gb = 0
 
     def _parse(self, option, prefix, parsetype):
         """parse the output of sar"""

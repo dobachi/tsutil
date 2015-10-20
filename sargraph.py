@@ -25,14 +25,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 import sys, re, datetime
 import subprocess 
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 import matplotlib.ticker as ticker
 import numpy as np
+from optparse import OptionParser
 
 from tsutil import Sar
 
-CANVAS_SIZE = (10,12) #in inch
+CANVAS_SIZE = (10,20) #in inch
 
 class SarGraph(object):
     def __init__(self, sars=[], targets=["LOAD","CPU","MEM","DISK","NET"], verbose=False):
@@ -48,7 +52,7 @@ class SarGraph(object):
         fig = plt.figure(1)
         fig.set_size_inches(*CANVAS_SIZE)
         title = "Sar Info: %s  %s - %s  @%s " % (s.datestr, self.x_start.strftime("%H:%M:%S"), self.x_stop.strftime("%H:%M:%S"), s.hostname)
-        fig.text(0.03, 0.99, title, fontsize=13, horizontalalignment='left', verticalalignment='top')
+        fig.text(0.03, 0.99, title, horizontalalignment='left', verticalalignment='top')
         fig.subplots_adjust(top=0.95, left=0.35, right=0.92)
 
         row_weights = self._get_row_weights()
@@ -118,14 +122,15 @@ class SarGraph(object):
         if "DISK" in self.targets:
             for i in range(self.sars.__len__()):
                 ret.extend([1]) #IO(ALL)
-                ret.extend([1]*len(s.iodevs)*2) #DISK(indivisual)
+                ret.extend([1]*len(sar.iodevs)*2) #DISK(indivisual)
         if "NET" in self.targets:
             for i in range(self.sars.__len__()):
                 ret.extend([1]) #SOCKET
-                ret.extend([1]*len(s.ifaces))
+                ret.extend([1]*len(sar.ifaces))
         return ret
 
     def __draw_tmpl(self,ax,ylabels,ylims=None):
+        ax.set_xlim(self.x_start,self.x_stop)
         ax2 = ax.twinx()
         ax.grid(True)
         ax.set_xlim(self.x_start,self.x_stop)
@@ -135,7 +140,6 @@ class SarGraph(object):
         if ylabels[1]:
             ax2.set_ylabel(ylabels[1])
         for xtick in ax.xaxis.get_major_ticks():
-            xtick.label.set_fontsize(10)
             xtick.label.set_rotation('vertical')
         for ytick in ax.yaxis.get_major_ticks():
             ytick.label.set_visible(False)
@@ -152,7 +156,7 @@ class SarGraph(object):
 
     def __put_text(self,fig,ax,content):
         label_ypos = ax.get_position().y1
-        fig.text(0.03, label_ypos, content, fontsize=10, horizontalalignment='left', verticalalignment='top')
+        fig.text(0.03, label_ypos, content, horizontalalignment='left', verticalalignment='top')
 
     def _do_make_graph_load(self,s,ax,fig):
         x1, y1 = s.get_metric2("task.procPs")
@@ -186,10 +190,9 @@ class SarGraph(object):
         ax.stackplot(x1, y1, y2, y3, y4, colors=["red","blue","purple","0.75"],linewidth=0)
         ax.set_yticklabels([])
         for xtick in ax.xaxis.get_major_ticks():
-            xtick.label.set_fontsize(10)
             xtick.label.set_rotation('vertical')
         label_ypos = ax.get_position().y1
-        fig.text(0.03, label_ypos, "    CPU#%d"%(cpuid,), fontsize=10, horizontalalignment='left', verticalalignment='top')
+        fig.text(0.03, label_ypos, "    CPU#%d"%(cpuid,), horizontalalignment='left', verticalalignment='top')
 
     def _do_make_graph_mem1(self,s,ax,fig):
         x1, y1_ = s.get_metric2("mem.kbmemused")
@@ -280,6 +283,21 @@ class SarGraph(object):
         self.__put_text(fig,ax,"Network[%(iface)s]" % locals())
 
 if __name__ == '__main__':
-    s = Sar("tests/sar.out")
-    g = SarGraph([s,],targets=["LOAD","CPU","MEM","DISK","NET"])
-    g.dump()
+    parser = OptionParser()
+    parser.add_option("-i", "--interval", dest="interval",
+                      help="The interval", metavar="INTEGER", default=1)
+    parser.add_option("-f", "--font-size", dest="font_size",
+                      help="The font size", metavar="INTEGER", default=10)
+
+
+    (options, args) = parser.parse_args()
+    (input_path, output_path) = args
+
+    font = {'family' : 'normal',
+            'size'   : 10}
+    plt.rc('font', **font)
+
+    sar = Sar(input_path, int(options.interval))
+
+    g = SarGraph([sar,],targets=["LOAD","CPU","MEM","DISK","NET"])
+    g.dump(output_path)

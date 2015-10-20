@@ -24,9 +24,12 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 from tsutil import Sar
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pylab as plt
 import numpy as np
 import sys
+from optparse import OptionParser
 
 def put_text(fig,ax,target,data):
     label_ypos = ax.get_position().y1
@@ -36,7 +39,14 @@ def put_text(fig,ax,target,data):
     content = "%(target)s(med: %(median).1f max: %(max).1f $\mu$: %(av).1f)" %locals()
     fig.text(0.01, label_ypos, content, fontsize=8, horizontalalignment='left', verticalalignment='top')
 
-sar = Sar(sys.argv[1])
+parser = OptionParser()
+parser.add_option("-i", "--interval", dest="interval",
+                  help="The interval", metavar="INTEGER", default=1)
+
+(options, args) = parser.parse_args()
+(input_path, output_path) = args
+
+sar = Sar(input_path, int(options.interval))
 metric_names = sorted(sar.get_metric_names())
 
 fig, axes = plt.subplots(nrows=metric_names.__len__(), sharex=True)
@@ -48,4 +58,4 @@ for i,ax in enumerate(axes):
     ax.set_axis_off()
     put_text(fig,ax,metric_names[i],x)
 
-fig.savefig(sys.argv[2])
+fig.savefig(output_path)
