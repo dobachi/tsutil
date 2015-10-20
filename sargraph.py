@@ -130,7 +130,6 @@ class SarGraph(object):
         return ret
 
     def __draw_tmpl(self,ax,ylabels,ylims=None):
-        ax.set_xlim(self.x_start,self.x_stop)
         ax2 = ax.twinx()
         ax.grid(True)
         ax.set_xlim(self.x_start,self.x_stop)
